@@ -13,7 +13,7 @@ var items = [
     {name:'Amazon',url:'https://amazon.com'}
 ];
 
-var isAdmin = false;
+var isAdmin = true;
 
 res.render("pages/admin", {title: "Admin", items,isAdmin})
 })
