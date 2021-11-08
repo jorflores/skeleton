@@ -9,8 +9,9 @@ dotenv.config()
 var app = express();
 
 // Connection to MongoDB
-
-
+mongoose.connect(process.env.MONGODB_HOST)
+.then (db => console.log('db connected'))
+.catch(err => console.log(err))
 
 
 // Middlewares
