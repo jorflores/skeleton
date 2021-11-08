@@ -12,6 +12,7 @@ var app = express();
 
 
 
+
 // Middlewares
 app.use(morgan('dev'));
 app.set('view engine', 'ejs')
