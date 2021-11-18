@@ -1,15 +1,21 @@
 const {Router} = require('express');
 const router = Router()
 const Task = require('../models/task')
+const verify = require("../middleware/verifyAccess")
 
 
 // Nos regresaria las tareas guardadas en la BD con el método find(). Una vez obtenidas las tareas las regresamos a la pagina principal.
-router.get('/', async function(req,res){
+router.get('/',verify, async function(req,res){
 
  var tasks  = await Task.find()
  console.log(tasks) 
 res.render('index', {tasks})
 });
+
+router.get('/login', (req,res) => {
+  res.render('login')
+} )
+
 
 // Ruta que nos permita agregar nuevas tareas que vienen desde un metodo post. Una vez enviada la tarea podemos redireccionar a la pagina principal con res.redirect('/')
 router.post('/add', async (req,res) =>{

@@ -3,6 +3,7 @@ var express = require("express");
 var morgan = require("morgan");
 var mongoose = require('mongoose');
 var dotenv = require("dotenv");
+const cookieParser = require('cookie-parser');
 
 dotenv.config()
 
@@ -20,6 +21,7 @@ app.set('view engine', 'ejs')
 app.use(express.static('public'))
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
+app.use(cookieParser())
 
 // importing routes
 const indexRoutes = require('./routes/indexroutes');
