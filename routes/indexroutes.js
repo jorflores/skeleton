@@ -25,11 +25,20 @@ router.post('/add', async (req,res) =>{
 // Los editaremos en una pagina aparte llamada 'edit'
 router.get('/edit/:id',   async(req,res) =>{
 
+var id = req.params.id
+var task = await Task.findById(id)
+res.render('edit', {task})
+
 })
 
 
 // Ruta para efectuar la actualizacion de los datos utilizando el metodo update()
 router.post('/edit/:id',   async(req,res) =>{
+
+  console.log(req.body)
+  var id = req.params.id
+  await Task.updateOne({_id: id},req.body)
+  res.redirect('/')
 
     })
 
