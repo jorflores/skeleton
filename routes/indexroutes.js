@@ -14,7 +14,30 @@ res.render('index', {tasks})
 
 router.get('/login', (req,res) => {
   res.render('login')
-} )
+})
+
+router.post('/login', async function(req,res){
+
+  //Implementar logica
+  
+  
+})
+  
+
+router.get('/register', (req,res) => {
+  res.render('register')
+})
+
+
+router.post('/register', async function(req,res){
+  
+//Implementar logica
+
+});
+
+
+
+
 
 
 // Ruta que nos permita agregar nuevas tareas que vienen desde un metodo post. Una vez enviada la tarea podemos redireccionar a la pagina principal con res.redirect('/')
