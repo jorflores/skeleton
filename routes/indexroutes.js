@@ -1,13 +1,16 @@
 const {Router} = require('express');
 const router = Router()
 const Task = require('../models/task')
+const User = require('../models/user')
 const verify = require("../middleware/verifyAccess")
+const bcrypt = require('bcrypt')
+const jwt = require("jsonwebtoken")
 
 
 // Nos regresaria las tareas guardadas en la BD con el método find(). Una vez obtenidas las tareas las regresamos a la pagina principal.
 router.get('/',verify, async function(req,res){
 
- var tasks  = await Task.find()
+ var tasks  = await Task.find({user_id: req.userId})
  console.log(tasks) 
 res.render('index', {tasks})
 });
@@ -18,8 +21,39 @@ router.get('/login', (req,res) => {
 
 router.post('/login', async function(req,res){
 
-  //Implementar logica
+  console.log(req.body)
+  var {email,password} = req.body
+
+  /*var email = req.body.email
+  var password = req.body.password*/
+
+  //* Validar si el usuario existe
+ const user = await User.findOne({email: email})
+
+ if (!user){
+   return res.status(404).send("The user does not exist")
   
+ }
+ // Si el usuario existe, vamos a generar un token de JWT
+ else {
+  const valid = await bcrypt.compare(password,user.password) 
+
+// Si la contraseña es correcta generamos un JWT
+  if (valid) {
+
+    const token = jwt.sign({id:user.email, permission: true}, process.env.SECRET, {expiresIn: "1h"})
+    console.log(token)
+    res.cookie("token", token, {httpOnly:true})
+    res.redirect("/")
+
+  }
+
+  else {
+    console.log("Password is invalid")
+    res.redirect('/login')
+  }
+
+ }
   
 })
   
@@ -31,7 +65,12 @@ router.get('/register', (req,res) => {
 
 router.post('/register', async function(req,res){
   
-//Implementar logica
+console.log(req.body)
+
+var user = new User(req.body)
+user.password = await bcrypt.hashSync(user.password,10)
+await user.save()
+res.redirect("/")
 
 });
 
@@ -41,9 +80,10 @@ router.post('/register', async function(req,res){
 
 
 // Ruta que nos permita agregar nuevas tareas que vienen desde un metodo post. Una vez enviada la tarea podemos redireccionar a la pagina principal con res.redirect('/')
-router.post('/add', async (req,res) =>{
+router.post('/add',verify, async (req,res) =>{
 
   var task = new Task(req.body)
+  task.user_id = req.userId
   console.log(task)
   await task.save()
   res.redirect('/')
@@ -90,6 +130,12 @@ router.get('/delete/:id',  async (req,res) =>{
   await Task.remove({_id: id})
   res.redirect('/')
 
+})
+
+router.get('/logoff', (req,res)=> {
+
+res.clearCookie("token")
+res.redirect("/")
 })
 
 module.exports = router; 

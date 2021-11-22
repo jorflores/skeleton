@@ -7,7 +7,8 @@ var TaskSchema = Schema ({
     status:{
         type: Boolean, 
         default: false
-    }
+    },
+    user_id: String
 })
 
 module.exports = model('tasks',TaskSchema)
